@@ -1,9 +1,21 @@
 // fetchUnityVersion.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#include <nan.h>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
+using namespace v8;
+using namespace node;
+
+#define THROW_BAD_ARGS Nan::ThrowTypeError("Bad argument")
+
+NAN_MODULE_INIT(InitModule) {
+
+}
+
+#ifdef _WIN32
 // returns NULL if the value could not be obtained
 wchar_t *GetUnityVersion(const wchar_t *szFilename)
 {
@@ -37,23 +49,48 @@ wchar_t *GetUnityVersion(const wchar_t *szFilename)
 	delete[] data;
 	return ret;
 }
+#endif
 
-int main()
-{
-	const wchar_t *szFilename = L"C:\\Program Files\\Unity 2018.1.0b2\\Editor\\Unity.exe";
+static NAN_METHOD(GetUnityVersion) {
+  if (info.Length() < 1 ||
+      !info[0]->IsString() ) {
+    return THROW_BAD_ARGS;
+  }
 
-	wchar_t *unityVersion = GetUnityVersion(szFilename);
+  String::Utf8Value path(info[0]->ToString());
 
-	if (unityVersion)
-	{
-		wprintf(L"%s\n", unityVersion);
-		delete[] unityVersion;
-	}
-	else
-	{
-		printf("error\n");
-	}
+  // Synchronous call needs much less work
+  if (!info[1]->IsFunction()) {
+#ifdef _WIN32
+    wchar_t *unityVersion = GetUnityVersion(path);
+	info.GetReturnValue().Set(Nan::New<String>(unityVersion));
+#else
+    info.GetReturnValue().SetUndefined();
+#endif
+    return;
+  }
 
+/*
+// overkill to create a promise for now...
 
-	return 0;
+  store_data_t* statvfs_data = new store_data_t();
+
+  statvfs_data->cb = new Nan::Callback((Local<Function>) info[1].As<Function>());
+  statvfs_data->fs_op = FS_OP_STATVFS;
+  statvfs_data->path = strdup(*path);
+
+  uv_work_t *req = new uv_work_t;
+  req->data = statvfs_data;
+  uv_queue_work(uv_default_loop(), req, EIO_StatVFS,(uv_after_work_cb)EIO_After);
+*/
+  info.GetReturnValue().SetUndefined();
 }
+
+extern "C"
+NAN_MODULE_INIT(init)
+{
+
+}
+
+
+NODE_MODULE(editorVersion, init);

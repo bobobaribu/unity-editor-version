@@ -1,13 +1,12 @@
 {
   "targets": [{
-    "target_name": "myModule",
+    "target_name": "editorVersion",
     "include_dirs" : [
       "src",
       "<!(node -e \"require('nan')\")"
     ],
     "sources": [
-      "src/index.cc",
-      "src/Vector.cc"
+      "fetchUnityVersion.cc"
     ]
   }]
 }
