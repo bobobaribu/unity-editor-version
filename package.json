@@ -1,0 +1,16 @@
+{
+  "name": "unity-editor-version",
+  "version": "1.0.0",
+  "description": "Provide the version information for a Unity Editor installation",
+  "main": "editor-version.js",
+  "scripts": {
+    "build": "node-gyp build",
+    "install": "node-gyp rebuild",
+    "test": "node ./test.js"
+  },
+  "dependencies": {
+    "nan": "^2.7.0"
+  },
+  "author": "Unity Technologies Inc.",
+  "license": "MIT"
+}
