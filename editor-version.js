@@ -1,9 +1,8 @@
-var editorVersion
+var binding = require('./build/Release/editorVersion.node');
 
-if (process.env.DEBUG) {
-    editorVersion= require('./build/Debug/editorVersion.node')
-} else {
-    editorVersion= require('./build/Release/editorVersion.node')
+exports.getUnityVersion = function(path, cb) {
+    if (cb) {
+      return binding.GetUnityVersion(path, cb);
+    }
+    return binding.GetUnityVersion(path);
 }
-
-module.exports = editorVersion

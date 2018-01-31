@@ -7,6 +7,7 @@
     ],
     "sources": [
       "fetchUnityVersion.cc"
-    ]
+    ],
+    "libraries": [ "Version.lib" ]
   }]
 }
