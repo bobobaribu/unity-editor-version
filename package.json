@@ -13,5 +13,5 @@
   },
   "author": "Unity Technologies Inc.",
   "license": "MIT",
-  "os" : [ "win32" ]
+  "os" : [ "!darwin" ]
 }
